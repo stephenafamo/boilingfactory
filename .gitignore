@@ -1,0 +1,7 @@
+temp
+factory
+models
+*sqlboiler.*
+.ignore
+*.sql
+testing*

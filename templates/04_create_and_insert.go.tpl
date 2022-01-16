@@ -22,15 +22,15 @@ func CreateAndInsert{{$alias.UpPlural}}(ctx context.Context, exec boil.ContextEx
 
 func (f Factory) CreateAndInsert{{$alias.UpPlural}}(ctx context.Context, exec boil.ContextExecutor, number int, mods ...{{$alias.UpSingular}}Mod) (models.{{$alias.UpSingular}}Slice, error) {
 	var err error
-  var built models.{{$alias.UpSingular}}Slice
+  var inserted = make(models.{{$alias.UpSingular}}Slice, number)
 
   for i := 0; i < number; i++ {
-		built[i], err = f.CreateAndInsert{{$alias.UpSingular}}(ctx, exec, mods...)
+		inserted[i], err = f.CreateAndInsert{{$alias.UpSingular}}(ctx, exec, mods...)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	return built, nil
+	return inserted, nil
 }
 

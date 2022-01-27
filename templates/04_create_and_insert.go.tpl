@@ -1,3 +1,4 @@
+{{- if or (not .Table.IsView) (.Table.ViewCapabilities.CanInsert) -}}
 {{ $alias := .Aliases.Table .Table.Name -}}
 
 func CreateAndInsert{{$alias.UpSingular}}(ctx context.Context, exec boil.ContextExecutor, mods ...{{$alias.UpSingular}}Mod) (*models.{{$alias.UpSingular}}, error) {
@@ -34,3 +35,4 @@ func (f Factory) CreateAndInsert{{$alias.UpPlural}}(ctx context.Context, exec bo
 	return inserted, nil
 }
 
+{{end}}

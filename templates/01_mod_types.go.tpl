@@ -6,6 +6,15 @@ var _ = strconv.IntSize
 // This is to prevent errors in those that do not need it
 var _ = queries.Query{}
 
+{{if and .Table.IsView (not .Table.ViewCapabilities.CanInsert) -}}
+var (
+	// These packages are used in factories for
+	// tables and views that are insertable
+	_ = fmt.Sprintln("")
+	_ = context.Background()
+	_ = boil.DebugMode
+)
+{{- end}}
 
 {{ $alias := .Aliases.Table .Table.Name -}}
 

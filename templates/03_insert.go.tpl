@@ -55,10 +55,10 @@ func (f Factory) Insert{{$alias.UpSingular}}(ctx context.Context, exec boil.Cont
 		return err
 	}
 
+	{{if not .Table.IsView -}}
 	// Save in context to ensure we don't enter an infinite loop when adding relationships
 	ctx = addToContextKey(ctx, key, val)
 
-	{{if not .Table.IsView -}}
 	{{range $fk := .Table.ToOneRelationships -}}
 	{{- $ltable := $.Aliases.Table .Table -}}
 	{{- $ftable := $.Aliases.Table $fk.ForeignTable -}}
@@ -158,7 +158,4 @@ func (f Factory) Insert{{$alias.UpPlural}}(ctx context.Context, exec boil.Contex
 	return nil
 }
 
-{{else}}
-	// The fmt package is not used anywhere else
-	var _ = fmt.Sprintln("")
 {{end}}

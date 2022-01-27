@@ -158,4 +158,7 @@ func (f Factory) Insert{{$alias.UpPlural}}(ctx context.Context, exec boil.Contex
 	return nil
 }
 
+{{else}}
+	// The fmt package is not used anywhere else
+	var _ = fmt.Sprintln("")
 {{end}}

@@ -1,3 +1,4 @@
+{{- if or (not .Table.IsView) (.Table.ViewCapabilities.CanInsert) -}}
 {{ $alias := .Aliases.Table .Table.Name -}}
 
 func Insert{{$alias.UpSingular}}(ctx context.Context, exec boil.ContextExecutor, o *models.{{$alias.UpSingular}}) error {
@@ -7,16 +8,18 @@ func Insert{{$alias.UpSingular}}(ctx context.Context, exec boil.ContextExecutor,
 // Inserts the model in the given database
 func (f Factory) Insert{{$alias.UpSingular}}(ctx context.Context, exec boil.ContextExecutor, o *models.{{$alias.UpSingular}}) error {
 	var err error
+
+	if o == nil {
+		return fmt.Errorf("object to save must not be nil")
+	}
+
+	{{if not .Table.IsView -}}
 	var key contextKey = "Inserted{{$alias.UpSingular}}"
 	var val string = stringifyVal({{$.Table.PKey.Columns | stringMap (aliasCols $alias) | prefixStringSlice "o." | join ", "}})
 
 	// Check if we have already inserted this model and skip if true
 	if inContextKey(ctx, key, val) {
 		return nil
-	}
-
-	if o == nil {
-		return fmt.Errorf("object to save must not be nil")
 	}
 
 	if o.R == nil {
@@ -44,6 +47,7 @@ func (f Factory) Insert{{$alias.UpSingular}}(ctx context.Context, exec boil.Cont
 		}
 	{{end}}
 	{{end}}
+	{{- end}}{{/* End not .Table.IsView*/}}
 
 
 	err = o.Insert(ctx, exec, boil.Infer())
@@ -54,6 +58,7 @@ func (f Factory) Insert{{$alias.UpSingular}}(ctx context.Context, exec boil.Cont
 	// Save in context to ensure we don't enter an infinite loop when adding relationships
 	ctx = addToContextKey(ctx, key, val)
 
+	{{if not .Table.IsView -}}
 	{{range $fk := .Table.ToOneRelationships -}}
 	{{- $ltable := $.Aliases.Table .Table -}}
 	{{- $ftable := $.Aliases.Table $fk.ForeignTable -}}
@@ -131,6 +136,7 @@ func (f Factory) Insert{{$alias.UpSingular}}(ctx context.Context, exec boil.Cont
 		}
 
 	{{end}}
+	{{- end}}{{/* End not .Table.IsView*/}}
 
 	return nil
 }
@@ -151,3 +157,5 @@ func (f Factory) Insert{{$alias.UpPlural}}(ctx context.Context, exec boil.Contex
 
 	return nil
 }
+
+{{end}}

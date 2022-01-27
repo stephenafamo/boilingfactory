@@ -1,3 +1,5 @@
+{{- if or .Table.IsJoinTable .Table.IsView -}}
+{{- else -}}
 {{ $alias := .Aliases.Table .Table.Name -}}
 
 {{range .Table.ToOneRelationships -}}
@@ -66,4 +68,4 @@ func {{$alias.UpSingular}}WithNew{{$from}}(f *Factory, mods ...{{$ftable.UpSingu
 
 
 {{end}}
-
+{{end}}

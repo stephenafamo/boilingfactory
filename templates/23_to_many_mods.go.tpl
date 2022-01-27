@@ -1,3 +1,5 @@
+{{- if or .Table.IsJoinTable .Table.IsView -}}
+{{- else -}}
 {{ $alias := .Aliases.Table .Table.Name -}}
 
 {{range .Table.ToManyRelationships -}}
@@ -133,3 +135,4 @@ func {{$alias.UpSingular}}AddNew{{$from}}(f *Factory, number int, mods ...{{$fta
 }
 
 {{end}}{{/* range tomany */}}
+{{end}}

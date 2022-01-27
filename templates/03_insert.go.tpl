@@ -35,7 +35,7 @@ func (f Factory) Insert{{$alias.UpSingular}}(ctx context.Context, exec boil.Cont
 	{{- $from := $relAlias.Foreign -}} 
 	{{- $usesPrimitives := usesPrimitives $.Tables .Table .Column .ForeignTable .ForeignColumn -}}
 		if isZero(o.{{$columnName}}) {{if not $usesPrimitives}}|| queries.IsNil(o.{{$columnName}}){{end}} {
-				related, err := f.CreateAndInsert{{$from}}(ctx, exec)
+				related, err := f.CreateAndInsert{{$ftable.UpSingular}}(ctx, exec)
 				if err != nil {
 					return err
 				}
@@ -79,7 +79,7 @@ func (f Factory) Insert{{$alias.UpSingular}}(ctx context.Context, exec boil.Cont
 
 
 		{{- if .Unique -}}
-			err = f.Insert{{$relAlias.Local}}(ctx, exec, o.R.{{$relAlias.Local}})
+			err = f.Insert{{$ftable.UpSingular}}(ctx, exec, o.R.{{$relAlias.Local}})
 			if err != nil {
 				return err
 			}
@@ -107,7 +107,7 @@ func (f Factory) Insert{{$alias.UpSingular}}(ctx context.Context, exec boil.Cont
 
 	if len(o.R.{{$relAlias.Local}}) > 0 {
 		{{if .ToJoinTable -}}
-			err = f.Insert{{$relAlias.Local}}(ctx, exec, o.R.{{$relAlias.Local}})
+			err = f.Insert{{$ftable.UpPlural}}(ctx, exec, o.R.{{$relAlias.Local}})
 			if err != nil {
 				return err
 			}

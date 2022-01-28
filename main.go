@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -141,24 +140,10 @@ func preRun(cmd *cobra.Command, args []string) error {
 		return commandFailure("must provide a driver name")
 	}
 
-	driverName := args[0]
-	driverPath := args[0]
-
-	if strings.ContainsRune(driverName, os.PathSeparator) {
-		driverName = strings.Replace(filepath.Base(driverName), "sqlboiler-", "", 1)
-		driverName = strings.Replace(driverName, ".exe", "", 1)
-	} else {
-		driverPath = "sqlboiler-" + driverPath
-		if p, err := exec.LookPath(driverPath); err == nil {
-			driverPath = p
-		}
-	}
-
-	driverPath, err = filepath.Abs(driverPath)
+	driverName, driverPath, err := drivers.RegisterBinaryFromCmdArg(args[0])
 	if err != nil {
-		return fmt.Errorf("could not find absolute path to driver: %w", err)
+		return fmt.Errorf("could not register driver: %w", err)
 	}
-	drivers.RegisterBinary(driverName, driverPath)
 
 	// Create the directior
 	tempTemplatesDir, err = ioutil.TempDir("", "boilingfactory")

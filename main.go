@@ -97,6 +97,7 @@ func main() {
 	rootCmd.PersistentFlags().BoolP("debug", "d", false, "Debug mode prints stack traces on error")
 	rootCmd.PersistentFlags().BoolP("no-tests", "", false, "Disable generated go test files")
 	rootCmd.PersistentFlags().BoolP("add-enum-types", "", false, "Enable generation of types for enums")
+	rootCmd.PersistentFlags().StringP("enum-null-prefix", "", "Null", "Name prefix of nullable enum types")
 	rootCmd.PersistentFlags().BoolP("version", "", false, "Print the version")
 	rootCmd.PersistentFlags().BoolP("wipe", "", false, "Delete the output folder (rm -rf) before generation to ensure sanity")
 
@@ -162,15 +163,17 @@ func preRun(cmd *cobra.Command, args []string) error {
 	}
 
 	cmdConfig = &boilingcore.Config{
-		DriverName:   driverName,
-		OutFolder:    viper.GetString("output"),
-		PkgName:      viper.GetString("pkgname"),
-		Debug:        viper.GetBool("debug"),
-		NoTests:      viper.GetBool("no-tests"),
-		Wipe:         viper.GetBool("wipe"),
-		Aliases:      boilingcore.ConvertAliases(viper.Get("aliases")),
-		TypeReplaces: boilingcore.ConvertTypeReplace(viper.Get("types")),
-		Version:      "boilingfactory-" + boilingfactoryVersion,
+		DriverName:     driverName,
+		OutFolder:      viper.GetString("output"),
+		PkgName:        viper.GetString("pkgname"),
+		Debug:          viper.GetBool("debug"),
+		AddEnumTypes:   viper.GetBool("add-enum-types"),
+		EnumNullPrefix: viper.GetString("enum-null-prefix"),
+		NoTests:        viper.GetBool("no-tests"),
+		Wipe:           viper.GetBool("wipe"),
+		Aliases:        boilingcore.ConvertAliases(viper.Get("aliases")),
+		TypeReplaces:   boilingcore.ConvertTypeReplace(viper.Get("types")),
+		Version:        "boilingfactory-" + boilingfactoryVersion,
 
 		// Things we specifically override
 		TemplateDirs:      []string{tempTemplatesDir},
@@ -184,8 +187,10 @@ func preRun(cmd *cobra.Command, args []string) error {
 
 	// Configure the driver
 	cmdConfig.DriverConfig = map[string]interface{}{
-		"whitelist": viper.GetStringSlice(driverName + ".whitelist"),
-		"blacklist": viper.GetStringSlice(driverName + ".blacklist"),
+		"whitelist":        viper.GetStringSlice(driverName + ".whitelist"),
+		"blacklist":        viper.GetStringSlice(driverName + ".blacklist"),
+		"add-enum-types":   cmdConfig.AddEnumTypes,
+		"enum-null-prefix": cmdConfig.EnumNullPrefix,
 	}
 
 	keys := allKeys(driverName)

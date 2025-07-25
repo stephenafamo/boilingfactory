@@ -10,8 +10,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/volatiletech/sqlboiler/v4/boilingcore"
-	"github.com/volatiletech/sqlboiler/v4/drivers"
+	"github.com/aarondl/sqlboiler/v4/boilingcore"
+	"github.com/aarondl/sqlboiler/v4/drivers"
 )
 
 //go:embed templates
@@ -74,7 +74,7 @@ func main() {
 	}
 
 	// Set up the cobra root command
-	var rootCmd = &cobra.Command{
+	rootCmd := &cobra.Command{
 		Use:   "boilingfactory [flags] <driver>",
 		Short: "Boilingfactory generates factoryer for your SQLBoiler models.",
 		Long: "Boilingfactory generates factoryer for your SQLBoiler models.\n" +
@@ -153,7 +153,7 @@ func preRun(cmd *cobra.Command, args []string) error {
 	}
 
 	// Add a folder for our singleton templates
-	if err := os.Mkdir(tempTemplatesDir+"/singleton", 0755); err != nil {
+	if err := os.Mkdir(tempTemplatesDir+"/singleton", 0o755); err != nil {
 		return fmt.Errorf("could not make singleton temp directory: %w", err)
 	}
 

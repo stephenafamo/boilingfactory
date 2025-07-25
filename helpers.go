@@ -14,7 +14,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/spf13/viper"
-	"github.com/volatiletech/sqlboiler/v4/importers"
+	"github.com/aarondl/sqlboiler/v4/importers"
 	"golang.org/x/mod/modfile"
 )
 
@@ -144,8 +144,8 @@ func configureImports() importers.Collection {
 		Standard: []string{`"fmt"`},
 		ThirdParty: []string{
 			fmt.Sprintf(`models "%s"`, modelsPkg),
-			`"github.com/volatiletech/sqlboiler/v4/boil"`,
-			`"github.com/volatiletech/sqlboiler/v4/queries"`,
+			`"github.com/aarondl/sqlboiler/v4/boil"`,
+			`"github.com/aarondl/sqlboiler/v4/queries"`,
 		},
 	}
 	imports.Singleton["boilingfactory_main"] = importers.Set{
